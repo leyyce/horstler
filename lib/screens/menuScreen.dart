@@ -69,7 +69,7 @@ class _FutureBuilderWidgetState extends State {
                 image: AssetImage('assets/icons/horstler_icon.png'),
               ),
               photoSize: 50,
-              backgroundColor: Colors.white,
+              backgroundColor: Colors.white38,
               loaderColor: Colors.green,
               styleTextUnderTheLoader: TextStyle(),
             );
@@ -123,7 +123,7 @@ class _FutureBuilderWidgetState extends State {
                 ),
               ),
               body: TabBarView(
-                  children: menuWidgets
+                  children: menuWidgets,
               ),
             ),
           );
