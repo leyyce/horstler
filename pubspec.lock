@@ -110,9 +110,11 @@ packages:
   horstl_wrapper:
     dependency: "direct main"
     description:
-      path: "F:\\Coding\\Dart\\horstl_wrapper_dart"
-      relative: false
-    source: path
+      path: "."
+      ref: HEAD
+      resolved-ref: cb2ef18595658c2c197d1afd501465c31fd61c9e
+      url: "git://github.com/ElCap1tan/horstl_wrapper_dart.git"
+    source: git
     version: "0.0.0"
   html:
     dependency: transitive

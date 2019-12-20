@@ -20,7 +20,8 @@ dependencies:
   flutter:
     sdk: flutter
   horstl_wrapper:
-    path: F:\Coding\Dart\horstl_wrapper_dart
+    git: git://github.com/ElCap1tan/horstl_wrapper_dart.git
+    # path: F:\Coding\Dart\horstl_wrapper_dart
   intl: ^0.16.0
   shared_preferences: ^0.5.6
   splashscreen: ^1.2.0
