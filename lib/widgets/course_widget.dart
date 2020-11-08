@@ -11,7 +11,7 @@ class CourseWidget extends StatefulWidget {
   State<StatefulWidget> createState() => _CourseWidgetState(course);
 }
 
-class _CourseWidgetState extends State<CourseWidget>{
+class _CourseWidgetState extends State<CourseWidget> {
   Course course;
   _CourseWidgetState(this.course);
 
@@ -22,66 +22,64 @@ class _CourseWidgetState extends State<CourseWidget>{
         borderRadius: BorderRadius.circular(15.0),
       ),
       color: Color.fromRGBO(18, 124, 47, 100),
-      child: Column(
-          children: <Widget>[
-            ListTile(
-              contentPadding: EdgeInsets.only(top: 10, left: 20, right: 20),
-              leading: Icon(
-                Icons.assignment,
-                color: Colors.white,
-              ),
-              title: Text(
-                '[${course.id()}] ${course.name()}',
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 14,
-                ),
-              ),
+      child: Column(children: <Widget>[
+        ListTile(
+          contentPadding: EdgeInsets.only(top: 10, left: 20, right: 20),
+          leading: Icon(
+            Icons.assignment,
+            color: Colors.white,
+          ),
+          title: Text(
+            '[${course.id()}] ${course.name()}',
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 14,
             ),
-            ListTile(
-              contentPadding: EdgeInsets.only(left: 20, right: 20),
-              leading: Icon(
-                Icons.access_time,
-                color: Colors.white,
-              ),
-              title: Text(
-                course.time(),
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                ),
-              ),
+          ),
+        ),
+        ListTile(
+          contentPadding: EdgeInsets.only(left: 20, right: 20),
+          leading: Icon(
+            Icons.access_time,
+            color: Colors.white,
+          ),
+          title: Text(
+            course.time(),
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 16,
             ),
-            ListTile(
-              contentPadding: EdgeInsets.only(left: 20, right: 20),
-              leading: Icon(
-                Icons.location_on,
-                color: Colors.white,
-              ),
-              title: Text(
-                course.roomInfo(),
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                ),
-              ),
+          ),
+        ),
+        ListTile(
+          contentPadding: EdgeInsets.only(left: 20, right: 20),
+          leading: Icon(
+            Icons.location_on,
+            color: Colors.white,
+          ),
+          title: Text(
+            course.roomInfo(),
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 16,
             ),
-            ListTile(
-              contentPadding: EdgeInsets.only(left: 20, right: 20),
-              leading: Icon(
-                Icons.person,
-                color: Colors.white,
-              ),
-              title: Text(
-                course.docent(),
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 16,
-                ),
-              ),
+          ),
+        ),
+        ListTile(
+          contentPadding: EdgeInsets.only(left: 20, right: 20),
+          leading: Icon(
+            Icons.person,
+            color: Colors.white,
+          ),
+          title: Text(
+            course.docent(),
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 16,
             ),
-          ]
-      ),
+          ),
+        ),
+      ]),
     );
   }
 }

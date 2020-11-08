@@ -3,15 +3,13 @@ import 'package:horstler/screens/homeScreen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class LoginScreen extends StatefulWidget {
-
   LoginScreen({Key key}) : super(key: key);
 
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
 
-
-class _LoginScreenState extends State<LoginScreen>{
+class _LoginScreenState extends State<LoginScreen> {
   final fdNumController = TextEditingController();
   final passWordController = TextEditingController();
   TextStyle style = TextStyle(fontFamily: 'Montserrat', fontSize: 20);
@@ -35,8 +33,7 @@ class _LoginScreenState extends State<LoginScreen>{
           hintText: 'fdXXXXX',
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(32),
-          )
-      ),
+          )),
     );
 
     final passWordField = TextField(
@@ -63,17 +60,14 @@ class _LoginScreenState extends State<LoginScreen>{
           var fdNumber = fdNumController.text;
           var passWord = passWordController.text;
           _saveLogin(fdNumber, passWord);
-          Navigator.of(context).pushReplacement(MaterialPageRoute(
-            builder: (context) =>HomeScreen()
-           ));
+          Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (context) => HomeScreen()));
         },
         child: Text(
           'Login',
           textAlign: TextAlign.center,
-          style: style.copyWith(
-            color: Colors.white,
-            fontWeight: FontWeight.bold
-          ),
+          style:
+              style.copyWith(color: Colors.white, fontWeight: FontWeight.bold),
         ),
       ),
     );
@@ -81,9 +75,8 @@ class _LoginScreenState extends State<LoginScreen>{
       body: SingleChildScrollView(
         child: Center(
           child: Container(
-            constraints: BoxConstraints(
-              minHeight: MediaQuery.of(context).size.height
-            ),
+            constraints:
+                BoxConstraints(minHeight: MediaQuery.of(context).size.height),
             color: Colors.white,
             child: Padding(
               padding: const EdgeInsets.all(36),
@@ -98,13 +91,21 @@ class _LoginScreenState extends State<LoginScreen>{
                       fit: BoxFit.contain,
                     ),
                   ),
-                  SizedBox(height: 45,),
+                  SizedBox(
+                    height: 45,
+                  ),
                   fdNumField,
-                  SizedBox(height: 25,),
+                  SizedBox(
+                    height: 25,
+                  ),
                   passWordField,
-                  SizedBox(height: 35,),
+                  SizedBox(
+                    height: 35,
+                  ),
                   loginButton,
-                  SizedBox(height: 15,)
+                  SizedBox(
+                    height: 15,
+                  )
                 ],
               ),
             ),

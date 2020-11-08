@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import 'package:horstl_wrapper/horstl_wrapper.dart';
-import 'package:horstler/screens/loginScreen.dart';
 import 'package:horstler/widgets/course_widget.dart';
 import 'package:intl/intl.dart';
 import 'package:splashscreen/splashscreen.dart';
@@ -12,18 +11,19 @@ class TimeTableScreen extends StatefulWidget {
   final String fdNumber;
   final String passWord;
   @override
-  _FutureBuilderWidgetState createState() => _FutureBuilderWidgetState(fdNumber, passWord);
+  _TimeTableScreenState createState() =>
+      _TimeTableScreenState(fdNumber, passWord);
 }
 
 Future<TimeTable> _getDataFromFuture(String fdNumber, String passWord) async {
   return await HorstlScrapper(fdNumber, passWord).getTimeTable();
 }
 
-class _FutureBuilderWidgetState extends State {
+class _TimeTableScreenState extends State {
   final String fdNumber;
   final String passWord;
 
-  _FutureBuilderWidgetState(this.fdNumber, this.passWord);
+  _TimeTableScreenState(this.fdNumber, this.passWord);
 
   /*
   @override
@@ -53,7 +53,7 @@ class _FutureBuilderWidgetState extends State {
           if (!snapshot.hasData) {
             return SplashScreen(
               seconds: 20,
-              navigateAfterSeconds: LoginScreen(),
+              navigateAfterSeconds: '/loginScreen',
               title: Text('horstler'),
               image: Image(
                 image: AssetImage('assets/icons/horstler_icon.png'),
@@ -62,9 +62,9 @@ class _FutureBuilderWidgetState extends State {
               backgroundColor: Colors.white38,
               loaderColor: Colors.green,
               styleTextUnderTheLoader: TextStyle(),
+              routeName: '/splashScreen',
             );
           }
-
 
           var timeTable;
           timeTable = snapshot.data ?? TimeTable('N/A', 'N/A'); // ?? timeTable
@@ -72,65 +72,68 @@ class _FutureBuilderWidgetState extends State {
           for (var day in timeTable.days.values) {
             var courseWidgets = <Widget>[];
             if (day.courses().isEmpty) {
-              courseWidgets.add(
-                  Card(
-                      shape:
-                      RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(15.0),
-                      ),
-                      color: Color.fromRGBO(18, 124, 47, 100),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        // crossAxisAlignment: CrossAxisAlignment.center,
-                        children: <Widget>[
-                          ListTile(
-                            contentPadding: EdgeInsets.all(20),
-                            leading: Icon(
-                              Icons.hotel,
-                              color: Colors.white,
-                            ),
-                            title: Text(
-                              'Sieht aus wie ein freier Tag :)',
-                              style: TextStyle(
-                                color: Colors.white,
-                                fontSize: 18,
-                              ),
-                            ),
+              courseWidgets.add(Card(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15.0),
+                  ),
+                  color: Color.fromRGBO(18, 124, 47, 100),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    // crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      ListTile(
+                        contentPadding: EdgeInsets.all(20),
+                        leading: Icon(
+                          Icons.hotel,
+                          color: Colors.white,
+                        ),
+                        title: Text(
+                          'Sieht aus wie ein freier Tag :)',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontSize: 18,
                           ),
-                        ],
-                      )
-                  )
-              );
-            }
-            else if (day.courses().length == 1) {
-              courseWidgets.add(CourseWidget(course: day.courses()[0],));
-            }
-            else {
+                        ),
+                      ),
+                    ],
+                  )));
+            } else if (day.courses().length == 1) {
+              courseWidgets.add(CourseWidget(
+                course: day.courses()[0],
+              ));
+            } else {
               for (int i = 0; i < day.courses().length; i++) {
                 if (i < day.courses().length - 1) {
-                  courseWidgets.add(CourseWidget(course: day.courses()[i],));
+                  courseWidgets.add(CourseWidget(
+                    course: day.courses()[i],
+                  ));
 
-                  var firstCourseEndTime = day.courses()[i].time().split(' bis ')[1];
-                  var secondCourseStartTime = day.courses()[i+1].time().split(' bis ')[0];
+                  var firstCourseEndTime =
+                      day.courses()[i].time().split(' bis ')[1];
+                  var secondCourseStartTime =
+                      day.courses()[i + 1].time().split(' bis ')[0];
                   var firstCourseList = firstCourseEndTime.split(':');
                   var secondCourseList = secondCourseStartTime.split(':');
-                  var firstCourseMinutes = int.parse(firstCourseList[1]) + int.parse(firstCourseList[0]) * 60;
-                  var secondCourseMinutes = int.parse(secondCourseList[1]) + int.parse(secondCourseList[0]) * 60;
+                  var firstCourseMinutes = int.parse(firstCourseList[1]) +
+                      int.parse(firstCourseList[0]) * 60;
+                  var secondCourseMinutes = int.parse(secondCourseList[1]) +
+                      int.parse(secondCourseList[0]) * 60;
 
-                  courseWidgets.add(_getBreakSpacer(secondCourseMinutes - firstCourseMinutes));
-                }
-                else {
-                  courseWidgets.add(CourseWidget(course: day.courses()[i],));
+                  courseWidgets.add(_getBreakSpacer(
+                      secondCourseMinutes - firstCourseMinutes));
+                } else {
+                  courseWidgets.add(CourseWidget(
+                    course: day.courses()[i],
+                  ));
                 }
               }
             }
             dayWidgets.add(
               Center(
-                child: ListView(
-                  padding: EdgeInsets.all(10),
-                  children: courseWidgets,
-                )
-              ),
+                  child: ListView(
+                padding: EdgeInsets.all(10),
+                children: courseWidgets,
+              )),
             );
           }
           return DefaultTabController(
@@ -145,30 +148,33 @@ class _FutureBuilderWidgetState extends State {
                   children: <Widget>[
                     TabBar(
                       tabs: <Widget>[
-                        Tab(text: '${timeTable.days['monday'].dow()}\n${timeTable
-                            .days['monday'].date()}'),
-                        Tab(text: '${timeTable.days['tuesday'].dow()}\n${timeTable
-                            .days['tuesday'].date()}'),
-                        Tab(text: '${timeTable.days['wednesday'].dow()}\n${timeTable
-                            .days['wednesday'].date()}'),
-                        Tab(text: '${timeTable.days['thursday'].dow()}\n${timeTable
-                            .days['thursday'].date()}'),
-                        Tab(text: '${timeTable.days['friday'].dow()}\n${timeTable
-                            .days['friday'].date()}'),
-                        Tab(text: '${timeTable.days['saturday'].dow()}\n${timeTable
-                            .days['saturday'].date()}'),
+                        Tab(
+                            text:
+                                '${timeTable.days['monday'].dow()}\n${timeTable.days['monday'].date()}'),
+                        Tab(
+                            text:
+                                '${timeTable.days['tuesday'].dow()}\n${timeTable.days['tuesday'].date()}'),
+                        Tab(
+                            text:
+                                '${timeTable.days['wednesday'].dow()}\n${timeTable.days['wednesday'].date()}'),
+                        Tab(
+                            text:
+                                '${timeTable.days['thursday'].dow()}\n${timeTable.days['thursday'].date()}'),
+                        Tab(
+                            text:
+                                '${timeTable.days['friday'].dow()}\n${timeTable.days['friday'].date()}'),
+                        Tab(
+                            text:
+                                '${timeTable.days['saturday'].dow()}\n${timeTable.days['saturday'].date()}'),
                       ],
                     ),
                   ],
                 ),
               ),
-              body: TabBarView(
-                children: dayWidgets
-              ),
+              body: TabBarView(children: dayWidgets),
             ),
           );
-        }
-    );
+        });
   }
 
   Widget _getBreakSpacer(int breakTimeMinutes) {
@@ -180,24 +186,24 @@ class _FutureBuilderWidgetState extends State {
       var minRemaining = breakTimeMinutes - hours * 60;
       breakTime = '${hours}h $minRemaining';
     }
-    IconData iconData = breakTimeMinutes <= 20? Icons.free_breakfast : Icons.fastfood;
+    IconData iconData =
+        breakTimeMinutes <= 20 ? Icons.free_breakfast : Icons.fastfood;
     return Container(
       padding: EdgeInsets.fromLTRB(0, 15, 0, 15),
-      child:  Center(
+      child: Center(
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              Icon(iconData),
-              Container(width: 15),
-              Text(
-                '$breakTime Minuten',
-                style: TextStyle(
-                  fontSize: 18,
-                ),
-              ),
-            ],
-          )
-      ),
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: <Widget>[
+          Icon(iconData),
+          Container(width: 15),
+          Text(
+            '$breakTime Minuten',
+            style: TextStyle(
+              fontSize: 18,
+            ),
+          ),
+        ],
+      )),
     );
   }
 }

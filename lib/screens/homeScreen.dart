@@ -26,7 +26,7 @@ class HomeScreen extends StatefulWidget {
   _HomeScreenState createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen>{
+class _HomeScreenState extends State<HomeScreen> {
   int _selectedDrawerIndex = 0;
 
   _getDrawerItemWidget(int pos, fdNumber, passWord) {
@@ -37,7 +37,10 @@ class _HomeScreenState extends State<HomeScreen>{
           passWord: passWord,
         );
       case 1:
-        return MenuScreen(fdNumber: fdNumber, passWord: passWord,); // mensaPage;
+        return MenuScreen(
+          fdNumber: fdNumber,
+          passWord: passWord,
+        ); // mensaPage;
       default:
         return new Text("Error");
     }
@@ -74,6 +77,7 @@ class _HomeScreenState extends State<HomeScreen>{
             backgroundColor: Colors.white,
             loaderColor: Colors.green,
             styleTextUnderTheLoader: TextStyle(),
+            routeName: '/splashScreen',
           );
         }
 
@@ -92,21 +96,20 @@ class _HomeScreenState extends State<HomeScreen>{
           var drawerOptions = <Widget>[];
           for (var i = 0; i < widget.drawerItems.length; i++) {
             var d = widget.drawerItems[i];
-            drawerOptions.add(
-                new ListTile(
-                  leading: Icon(d.icon),
-                  title: Text(
-                      d.title,
-                  ),
-                  selected: i == _selectedDrawerIndex,
-                  onTap: () => _onSelectItem(context, i),
-                )
-            );
+            drawerOptions.add(new ListTile(
+              leading: Icon(d.icon),
+              title: Text(
+                d.title,
+              ),
+              selected: i == _selectedDrawerIndex,
+              onTap: () => _onSelectItem(context, i),
+            ));
           }
           return Scaffold(
             appBar: AppBar(
               title: Text(widget.drawerItems[_selectedDrawerIndex].title),
-              backgroundColor: widget.drawerItems[_selectedDrawerIndex].mainColor,
+              backgroundColor:
+                  widget.drawerItems[_selectedDrawerIndex].mainColor,
               // bottom: widget.drawerItems[_selectedDrawerIndex].title != 'Timetable' ? null : TabBar(),
               actions: <Widget>[
                 IconButton(
@@ -114,9 +117,8 @@ class _HomeScreenState extends State<HomeScreen>{
                   tooltip: 'Logout',
                   onPressed: () {
                     _saveLogin('', '');
-                    Navigator.of(context).pushReplacement(MaterialPageRoute(
-                        builder: (context) => LoginScreen()
-                    ));
+                    Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(builder: (context) => LoginScreen()));
                   },
                 ),
               ],
@@ -143,7 +145,8 @@ class _HomeScreenState extends State<HomeScreen>{
                 ],
               ),
             ),
-            body: _getDrawerItemWidget(_selectedDrawerIndex, loginInfo[0], loginInfo[1]),
+            body: _getDrawerItemWidget(
+                _selectedDrawerIndex, loginInfo[0], loginInfo[1]),
           );
         }
         return LoginScreen();
