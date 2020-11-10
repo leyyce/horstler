@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:horstler/screens/homeScreen.dart';
-import 'package:horstler/screens/loginScreen.dart';
-import 'package:horstler/screens/menuScreen.dart';
-import 'package:horstler/screens/timeTableScreen.dart';
+import 'package:horstler/screens/home_screen.dart';
+import 'package:horstler/screens/login_screen.dart';
+import 'package:horstler/screens/menu_screen.dart';
+import 'package:horstler/screens/schedule_screen.dart';
 
 void main() => runApp(MyApp());
 
@@ -17,7 +17,7 @@ class MyApp extends StatelessWidget {
         '/': (BuildContext context) => HomeScreen(),
         '/loginScreen': (BuildContext context) => LoginScreen(),
         '/menuScreen': (BuildContext context) => MenuScreen(),
-        '/timeTableScreen': (BuildContext context) => TimeTableScreen(),
+        '/timeTableScreen': (BuildContext context) => ScheduleScreen(),
       },
       initialRoute: '/',
       theme: ThemeData(

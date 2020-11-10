@@ -5,32 +5,39 @@ import 'package:horstler/widgets/course_widget.dart';
 import 'package:intl/intl.dart';
 import 'package:splashscreen/splashscreen.dart';
 
-class TimeTableScreen extends StatefulWidget {
-  TimeTableScreen({Key key, this.fdNumber, this.passWord}) : super(key: key);
-
+class ScheduleScreen extends StatefulWidget {
   final String fdNumber;
   final String passWord;
+
+  ScheduleScreen({Key key, this.fdNumber, this.passWord}) : super(key: key);
+
   @override
-  _TimeTableScreenState createState() =>
-      _TimeTableScreenState(fdNumber, passWord);
+  _ScheduleScreenState createState() =>
+      _ScheduleScreenState(fdNumber, passWord);
 }
 
-Future<TimeTable> _getDataFromFuture(String fdNumber, String passWord) async {
-  return await HorstlScrapper(fdNumber, passWord).getTimeTable();
+Future<Schedule> _getDataFromFuture(
+    String fdNumber, String passWord, int calendarWeek, int year) async {
+  return await HorstlScrapper(fdNumber, passWord)
+      .getScheduleForWeek(calendarWeek, year);
 }
 
-class _TimeTableScreenState extends State {
-  final String fdNumber;
-  final String passWord;
+class _ScheduleScreenState extends State {
+  final String _fdNumber;
+  final String _passWord;
+  Future<Schedule> _scheduleFuture;
+  int _requestedWeek = DateTime.now().weekOfYear;
+  int _requestedYear = DateTime.now().year;
 
-  _TimeTableScreenState(this.fdNumber, this.passWord);
+  _ScheduleScreenState(this._fdNumber, this._passWord);
 
-  /*
   @override
   void initState() {
+    if (DateTime.now().weekday == 6) _increaseWeekOfYear();
+    _scheduleFuture = _getDataFromFuture(
+        _fdNumber, _passWord, _requestedWeek, _requestedYear);
     super.initState();
   }
-   */
 
   @override
   Widget build(BuildContext context) {
@@ -41,35 +48,43 @@ class _TimeTableScreenState extends State {
       'thu': 3,
       'fri': 4,
       'sat': 5,
-      'sun': 5,
+      'sun': 0,
     };
-    var currentDay = DateFormat('E').format(DateTime.now()).toLowerCase();
+
+    var currentDay = DateTime.now();
+    var currentDayName = DateFormat('E').format(currentDay).toLowerCase();
+
+    var splashScreen = SplashScreen(
+      seconds: 20,
+      navigateAfterSeconds: '/loginScreen',
+      title: Text('horstler'),
+      image: Image(
+        image: AssetImage('assets/icons/horstler_icon.png'),
+      ),
+      photoSize: 50,
+      backgroundColor: Colors.white38,
+      loaderColor: Colors.green,
+      styleTextUnderTheLoader: TextStyle(),
+      routeName: '/splashScreen',
+    );
+
     return new FutureBuilder(
-        future: _getDataFromFuture(fdNumber, passWord),
+        future: _scheduleFuture,
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.hasError) {
             print(snapshot.error);
           }
+          if (snapshot.connectionState != ConnectionState.done) {
+            return splashScreen;
+          }
           if (!snapshot.hasData) {
-            return SplashScreen(
-              seconds: 20,
-              navigateAfterSeconds: '/loginScreen',
-              title: Text('horstler'),
-              image: Image(
-                image: AssetImage('assets/icons/horstler_icon.png'),
-              ),
-              photoSize: 50,
-              backgroundColor: Colors.white38,
-              loaderColor: Colors.green,
-              styleTextUnderTheLoader: TextStyle(),
-              routeName: '/splashScreen',
-            );
+            return splashScreen;
           }
 
-          var timeTable;
-          timeTable = snapshot.data ?? TimeTable('N/A', 'N/A'); // ?? timeTable
+          var schedule;
+          schedule = snapshot.data ?? Schedule('N/A', 'N/A'); // ?? Schedule
           var dayWidgets = <Widget>[];
-          for (var day in timeTable.days.values) {
+          for (var day in schedule.days.values) {
             var courseWidgets = <Widget>[];
             if (day.courses().isEmpty) {
               courseWidgets.add(Card(
@@ -136,13 +151,50 @@ class _TimeTableScreenState extends State {
               )),
             );
           }
+
+          var floatingActionButtons = <Widget>[];
+
+          if (_requestedWeek != currentDay.weekOfYear &&
+              _requestedYear == currentDay.year) {
+            floatingActionButtons.add(FloatingActionButton(
+              heroTag: null,
+              onPressed: () {
+                setState(() {
+                  _decreaseWeekOfYear();
+                  _scheduleFuture = _getDataFromFuture(
+                      _fdNumber, _passWord, _requestedWeek, _requestedYear);
+                });
+              },
+              child: Icon(Icons.arrow_back),
+            ));
+            floatingActionButtons.add(
+              SizedBox(
+                height: 10,
+              ),
+            );
+          }
+          floatingActionButtons.add(
+            FloatingActionButton(
+              heroTag: null,
+              onPressed: () {
+                setState(
+                  () {
+                    _increaseWeekOfYear();
+                    _scheduleFuture = _getDataFromFuture(
+                        _fdNumber, _passWord, _requestedWeek, _requestedYear);
+                  },
+                );
+              },
+              child: Icon(Icons.arrow_forward),
+            ),
+          );
+
           return DefaultTabController(
-            initialIndex: dayMapping[currentDay],
+            initialIndex: dayMapping[currentDayName],
             length: 6,
             child: Scaffold(
               backgroundColor: Colors.white38,
               appBar: AppBar(
-                // title: Text("Timetable for ${timeTable.studentName}"),
                 flexibleSpace: Column(
                   mainAxisAlignment: MainAxisAlignment.end,
                   children: <Widget>[
@@ -150,31 +202,53 @@ class _TimeTableScreenState extends State {
                       tabs: <Widget>[
                         Tab(
                             text:
-                                '${timeTable.days['monday'].dow()}\n${timeTable.days['monday'].date()}'),
+                                '${schedule.days['monday'].dow()}\n${schedule.days['monday'].date()}'),
                         Tab(
                             text:
-                                '${timeTable.days['tuesday'].dow()}\n${timeTable.days['tuesday'].date()}'),
+                                '${schedule.days['tuesday'].dow()}\n${schedule.days['tuesday'].date()}'),
                         Tab(
                             text:
-                                '${timeTable.days['wednesday'].dow()}\n${timeTable.days['wednesday'].date()}'),
+                                '${schedule.days['wednesday'].dow()}\n${schedule.days['wednesday'].date()}'),
                         Tab(
                             text:
-                                '${timeTable.days['thursday'].dow()}\n${timeTable.days['thursday'].date()}'),
+                                '${schedule.days['thursday'].dow()}\n${schedule.days['thursday'].date()}'),
                         Tab(
                             text:
-                                '${timeTable.days['friday'].dow()}\n${timeTable.days['friday'].date()}'),
+                                '${schedule.days['friday'].dow()}\n${schedule.days['friday'].date()}'),
                         Tab(
                             text:
-                                '${timeTable.days['saturday'].dow()}\n${timeTable.days['saturday'].date()}'),
+                                '${schedule.days['saturday'].dow()}\n${schedule.days['saturday'].date()}'),
                       ],
                     ),
                   ],
                 ),
               ),
               body: TabBarView(children: dayWidgets),
+              floatingActionButton: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: floatingActionButtons,
+              ),
             ),
           );
         });
+  }
+
+  void _increaseWeekOfYear() {
+    if (_requestedWeek < 53)
+      _requestedWeek++;
+    else {
+      _requestedWeek = 1;
+      _requestedYear++;
+    }
+  }
+
+  void _decreaseWeekOfYear() {
+    if (_requestedWeek > 1)
+      _requestedWeek++;
+    else {
+      _requestedWeek = 53;
+      _requestedYear--;
+    }
   }
 
   Widget _getBreakSpacer(int breakTimeMinutes) {

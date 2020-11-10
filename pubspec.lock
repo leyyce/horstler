@@ -147,7 +147,7 @@ packages:
     description:
       path: "."
       ref: HEAD
-      resolved-ref: "2f9590737faf04d89c311b832c1de4bd04da117a"
+      resolved-ref: "9d1171d9909b5c06e5e9947f5de88c28963f8ec4"
       url: "git://github.com/ElCap1tan/horstl_wrapper_dart.git"
     source: git
     version: "0.0.0"

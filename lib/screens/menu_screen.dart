@@ -28,27 +28,25 @@ Future<List> _getDataFromFuture(
 }
 
 class _MenuScreenState extends State {
-  String fdNumber;
-  String passWord;
-  DateTime currentDay;
-  DateTime currentMonday;
+  String _fdNumber;
+  String _passWord;
+  DateTime _requestedDay;
+  DateTime _requestedMonday;
 
-  _MenuScreenState(this.fdNumber, this.passWord);
+  _MenuScreenState(this._fdNumber, this._passWord);
 
-  /*
   @override
   void initState() {
     super.initState();
+
+    _requestedDay = DateTime.now();
+    if (_requestedDay.weekday == DateTime.sunday)
+      _requestedDay = _requestedDay.add(Duration(days: 1));
+    _requestedMonday = _getCurrentMonday(_requestedDay);
   }
-   */
 
   @override
   Widget build(BuildContext context) {
-    currentDay = DateTime.now();
-    if (currentDay.weekday == DateTime.sunday)
-      currentDay = currentDay.add(Duration(days: 1));
-    currentMonday = _getCurrentMonday(currentDay);
-
     var dayMapping = {
       'mon': 0,
       'tue': 1,
@@ -59,26 +57,31 @@ class _MenuScreenState extends State {
       'sun': 0,
     };
 
+    var splashScreen = SplashScreen(
+      seconds: 20,
+      navigateAfterSeconds: '/loginScreen',
+      title: Text('horstler'),
+      image: Image(
+        image: AssetImage('assets/icons/horstler_icon_red.png'),
+      ),
+      photoSize: 50,
+      backgroundColor: Colors.white38,
+      loaderColor: Colors.red,
+      styleTextUnderTheLoader: TextStyle(),
+      routeName: '/splashScreen',
+    );
+
     return new FutureBuilder(
-        future: _getDataFromFuture(fdNumber, passWord, currentMonday),
+        future: _getDataFromFuture(_fdNumber, _passWord, _requestedMonday),
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.hasError) {
             print(snapshot.error);
           }
+          if (snapshot.connectionState != ConnectionState.done) {
+            return splashScreen;
+          }
           if (!snapshot.hasData) {
-            return SplashScreen(
-              seconds: 20,
-              navigateAfterSeconds: '/loginScreen',
-              title: Text('horstler'),
-              image: Image(
-                image: AssetImage('assets/icons/horstler_icon_red.png'),
-              ),
-              photoSize: 50,
-              backgroundColor: Colors.white38,
-              loaderColor: Colors.red,
-              styleTextUnderTheLoader: TextStyle(),
-              routeName: '/splashScreen',
-            );
+            return splashScreen;
           }
 
           var menuList;
@@ -99,9 +102,41 @@ class _MenuScreenState extends State {
               )),
             );
           }
+
+          FloatingActionButton floatingActionButton;
+          var currentWeek = DateTime.now().weekOfYear;
+
+          if (_requestedDay.weekOfYear == currentWeek) {
+            floatingActionButton = FloatingActionButton(
+              backgroundColor: Colors.red,
+              heroTag: null,
+              onPressed: () {
+                setState(() {
+                  _requestedDay = _requestedDay.add(Duration(days: 7));
+                  _requestedMonday = _getCurrentMonday(_requestedDay);
+                });
+              },
+              child: Icon(Icons.arrow_forward),
+            );
+          } else {
+            floatingActionButton = FloatingActionButton(
+              backgroundColor: Colors.red,
+              heroTag: null,
+              onPressed: () {
+                setState(
+                  () {
+                    _requestedDay = _requestedDay.subtract(Duration(days: 7));
+                    _requestedMonday = _getCurrentMonday(_requestedDay);
+                  },
+                );
+              },
+              child: Icon(Icons.arrow_back),
+            );
+          }
+
           return DefaultTabController(
             initialIndex:
-                dayMapping[DateFormat('E').format(currentDay).toLowerCase()],
+                dayMapping[DateFormat('E').format(_requestedDay).toLowerCase()],
             length: 6,
             child: Scaffold(
               backgroundColor: Colors.white38,
@@ -115,22 +150,22 @@ class _MenuScreenState extends State {
                       tabs: <Widget>[
                         Tab(
                             text: 'Mo.\n'
-                                '${currentMonday.day}.${currentMonday.month}'),
+                                '${_requestedMonday.day}.${_requestedMonday.month}'),
                         Tab(
                             text: 'Di.\n'
-                                '${currentMonday.add(Duration(days: 1)).day}.${currentMonday.add(Duration(days: 1)).month}'),
+                                '${_requestedMonday.add(Duration(days: 1)).day}.${_requestedMonday.add(Duration(days: 1)).month}'),
                         Tab(
                             text: 'Mi.\n'
-                                '${currentMonday.add(Duration(days: 2)).day}.${currentMonday.add(Duration(days: 2)).month}'),
+                                '${_requestedMonday.add(Duration(days: 2)).day}.${_requestedMonday.add(Duration(days: 2)).month}'),
                         Tab(
                             text: 'Do.\n'
-                                '${currentMonday.add(Duration(days: 3)).day}.${currentMonday.add(Duration(days: 3)).month}'),
+                                '${_requestedMonday.add(Duration(days: 3)).day}.${_requestedMonday.add(Duration(days: 3)).month}'),
                         Tab(
                             text: 'Fr.\n'
-                                '${currentMonday.add(Duration(days: 4)).day}.${currentMonday.add(Duration(days: 4)).month}'),
+                                '${_requestedMonday.add(Duration(days: 4)).day}.${_requestedMonday.add(Duration(days: 4)).month}'),
                         Tab(
                             text: 'Sa.\n'
-                                '${currentMonday.add(Duration(days: 5)).day}.${currentMonday.add(Duration(days: 5)).month}'),
+                                '${_requestedMonday.add(Duration(days: 5)).day}.${_requestedMonday.add(Duration(days: 5)).month}'),
                       ],
                     ),
                   ],
@@ -139,6 +174,7 @@ class _MenuScreenState extends State {
               body: TabBarView(
                 children: menuWidgets,
               ),
+              floatingActionButton: floatingActionButton,
             ),
           );
         });

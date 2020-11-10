@@ -1,9 +1,9 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-import 'package:horstler/screens/loginScreen.dart';
-import 'package:horstler/screens/menuScreen.dart';
-import 'package:horstler/screens/timeTableScreen.dart';
+import 'package:horstler/screens/login_screen.dart';
+import 'package:horstler/screens/menu_screen.dart';
+import 'package:horstler/screens/schedule_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:splashscreen/splashscreen.dart';
 
@@ -32,7 +32,7 @@ class _HomeScreenState extends State<HomeScreen> {
   _getDrawerItemWidget(int pos, fdNumber, passWord) {
     switch (pos) {
       case 0:
-        return TimeTableScreen(
+        return ScheduleScreen(
           fdNumber: fdNumber,
           passWord: passWord,
         );
