@@ -1,2 +1,2 @@
 # horstler
-Student helper app for the University Fulda written in Flutter and Dart.
+Student helper app for the Fulda University of Applied Sciences written in Flutter and Dart.
