@@ -15,25 +15,26 @@ class MenuScreen extends StatefulWidget {
   _MenuScreenState createState() => _MenuScreenState(fdNumber, passWord);
 }
 
-Future<List> _getDataFromFuture(
-    String fdNumber, String passWord, DateTime currentDay) async {
-  var menuWeek = [];
-  var day = currentDay;
-  for (int i = 0; i < 6; i++) {
-    var menu = await HorstlScrapper(fdNumber, passWord).getMenu(day);
-    menuWeek.add(menu);
-    day = day.add(Duration(days: 1));
-  }
-  return menuWeek;
-}
-
 class _MenuScreenState extends State {
   String _fdNumber;
   String _passWord;
   DateTime _requestedDay;
   DateTime _requestedMonday;
+  Future<List<Menu>> _menuFuture;
 
   _MenuScreenState(this._fdNumber, this._passWord);
+
+  Future<List<Menu>> _getMenuFromFuture(
+      String fdNumber, String passWord, DateTime currentDay) async {
+    var menuWeek = <Menu>[];
+    var day = currentDay;
+    for (int i = 0; i < 6; i++) {
+      var menu = await HorstlScrapper(fdNumber, passWord).getMenu(day);
+      menuWeek.add(menu);
+      day = day.add(Duration(days: 1));
+    }
+    return menuWeek;
+  }
 
   @override
   void initState() {
@@ -43,6 +44,8 @@ class _MenuScreenState extends State {
     if (_requestedDay.weekday == DateTime.sunday)
       _requestedDay = _requestedDay.add(Duration(days: 1));
     _requestedMonday = _getCurrentMonday(_requestedDay);
+
+    _menuFuture = _getMenuFromFuture(_fdNumber, _passWord, _requestedMonday);
   }
 
   @override
@@ -72,7 +75,7 @@ class _MenuScreenState extends State {
     );
 
     return new FutureBuilder(
-        future: _getDataFromFuture(_fdNumber, _passWord, _requestedMonday),
+        future: _menuFuture,
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.hasError) {
             print(snapshot.error);
@@ -114,6 +117,8 @@ class _MenuScreenState extends State {
                 setState(() {
                   _requestedDay = _requestedDay.add(Duration(days: 7));
                   _requestedMonday = _getCurrentMonday(_requestedDay);
+                  _menuFuture = _getMenuFromFuture(
+                      _fdNumber, _passWord, _requestedMonday);
                 });
               },
               child: Icon(Icons.arrow_forward),
@@ -127,6 +132,8 @@ class _MenuScreenState extends State {
                   () {
                     _requestedDay = _requestedDay.subtract(Duration(days: 7));
                     _requestedMonday = _getCurrentMonday(_requestedDay);
+                    _menuFuture = _getMenuFromFuture(
+                        _fdNumber, _passWord, _requestedMonday);
                   },
                 );
               },

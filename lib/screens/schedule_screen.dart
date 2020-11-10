@@ -16,12 +16,6 @@ class ScheduleScreen extends StatefulWidget {
       _ScheduleScreenState(fdNumber, passWord);
 }
 
-Future<Schedule> _getDataFromFuture(
-    String fdNumber, String passWord, int calendarWeek, int year) async {
-  return await HorstlScrapper(fdNumber, passWord)
-      .getScheduleForWeek(calendarWeek, year);
-}
-
 class _ScheduleScreenState extends State {
   final String _fdNumber;
   final String _passWord;
@@ -30,6 +24,12 @@ class _ScheduleScreenState extends State {
   int _requestedYear = DateTime.now().year;
 
   _ScheduleScreenState(this._fdNumber, this._passWord);
+
+  Future<Schedule> _getDataFromFuture(
+      String fdNumber, String passWord, int calendarWeek, int year) async {
+    return HorstlScrapper(fdNumber, passWord)
+        .getScheduleForWeek(calendarWeek, year);
+  }
 
   @override
   void initState() {
@@ -154,25 +154,6 @@ class _ScheduleScreenState extends State {
 
           var floatingActionButtons = <Widget>[];
 
-          if (_requestedWeek != currentDay.weekOfYear &&
-              _requestedYear == currentDay.year) {
-            floatingActionButtons.add(FloatingActionButton(
-              heroTag: null,
-              onPressed: () {
-                setState(() {
-                  _decreaseWeekOfYear();
-                  _scheduleFuture = _getDataFromFuture(
-                      _fdNumber, _passWord, _requestedWeek, _requestedYear);
-                });
-              },
-              child: Icon(Icons.arrow_back),
-            ));
-            floatingActionButtons.add(
-              SizedBox(
-                height: 10,
-              ),
-            );
-          }
           floatingActionButtons.add(
             FloatingActionButton(
               heroTag: null,
@@ -188,6 +169,27 @@ class _ScheduleScreenState extends State {
               child: Icon(Icons.arrow_forward),
             ),
           );
+
+          if (_requestedWeek != currentDay.weekOfYear &&
+                  _requestedYear == currentDay.year ||
+              _requestedYear != currentDay.year) {
+            floatingActionButtons.add(
+              SizedBox(
+                height: 10,
+              ),
+            );
+            floatingActionButtons.add(FloatingActionButton(
+              heroTag: null,
+              onPressed: () {
+                setState(() {
+                  _decreaseWeekOfYear();
+                  _scheduleFuture = _getDataFromFuture(
+                      _fdNumber, _passWord, _requestedWeek, _requestedYear);
+                });
+              },
+              child: Icon(Icons.arrow_back),
+            ));
+          }
 
           return DefaultTabController(
             initialIndex: dayMapping[currentDayName],
@@ -244,7 +246,7 @@ class _ScheduleScreenState extends State {
 
   void _decreaseWeekOfYear() {
     if (_requestedWeek > 1)
-      _requestedWeek++;
+      _requestedWeek--;
     else {
       _requestedWeek = 53;
       _requestedYear--;
