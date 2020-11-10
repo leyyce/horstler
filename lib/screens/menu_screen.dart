@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:horstl_wrapper/horstl_wrapper.dart';
 import 'package:horstler/widgets/dish_widget.dart';
-import 'package:intl/intl.dart';
-import 'package:splashscreen/splashscreen.dart';
+import 'package:horstler/screens/splash_screen.dart';
 
 class MenuScreen extends StatefulWidget {
   final String fdNumber;
@@ -142,8 +141,15 @@ class _MenuScreenState extends State {
           }
 
           return DefaultTabController(
-            initialIndex:
-                dayMapping[DateFormat('E').format(_requestedDay).toLowerCase()],
+            initialIndex: dayMapping[<String>[
+              'mon',
+              'tue',
+              'wed',
+              'thu',
+              'fri',
+              'sat',
+              'sun',
+            ][_requestedDay.weekday - 1]],
             length: 6,
             child: Scaffold(
               backgroundColor: Colors.white38,

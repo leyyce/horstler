@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 
 import 'package:horstl_wrapper/horstl_wrapper.dart';
 import 'package:horstler/widgets/course_widget.dart';
-import 'package:intl/intl.dart';
-import 'package:splashscreen/splashscreen.dart';
+import 'package:horstler/screens/splash_screen.dart';
 
 class ScheduleScreen extends StatefulWidget {
   final String fdNumber;
@@ -52,7 +51,15 @@ class _ScheduleScreenState extends State {
     };
 
     var currentDay = DateTime.now();
-    var currentDayName = DateFormat('E').format(currentDay).toLowerCase();
+    var currentDayName = <String>[
+      'mon',
+      'tue',
+      'wed',
+      'thu',
+      'fri',
+      'sat',
+      'sun',
+    ][currentDay.weekday - 1];
 
     var splashScreen = SplashScreen(
       seconds: 20,

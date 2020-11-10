@@ -4,8 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:horstler/screens/login_screen.dart';
 import 'package:horstler/screens/menu_screen.dart';
 import 'package:horstler/screens/schedule_screen.dart';
+import 'package:horstler/screens/splash_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:splashscreen/splashscreen.dart';
 
 class DrawerItem {
   final String title;
@@ -68,7 +68,8 @@ class _HomeScreenState extends State<HomeScreen> {
         }
         if (!snapshot.hasData) {
           return SplashScreen(
-            seconds: 1000,
+            seconds: 30,
+            navigateAfterSeconds: '/loginScreen',
             title: Text('horstler'),
             image: Image(
               image: AssetImage('assets/icons/horstler_icon.png'),
