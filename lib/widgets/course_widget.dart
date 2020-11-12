@@ -22,7 +22,7 @@ import 'package:horstl_wrapper/horstl_wrapper.dart';
 class CourseWidget extends StatefulWidget {
   final Course course;
 
-  CourseWidget({Key key, this.course});
+  CourseWidget({Key key, this.course}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _CourseWidgetState(course);
@@ -41,7 +41,7 @@ class _CourseWidgetState extends State<CourseWidget> {
       color: Color.fromRGBO(18, 124, 47, 100),
       child: Column(children: <Widget>[
         ListTile(
-          contentPadding: EdgeInsets.only(top: 10, left: 20, right: 20),
+          contentPadding: EdgeInsets.only(left: 20, right: 20),
           leading: Icon(
             Icons.assignment,
             color: Colors.white,

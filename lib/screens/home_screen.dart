@@ -22,6 +22,7 @@ import 'package:horstler/screens/login_screen.dart';
 import 'package:horstler/screens/menu_screen.dart';
 import 'package:horstler/screens/schedule_screen.dart';
 import 'package:horstler/screens/splash_screen.dart';
+import 'package:horstler/screens/welcome_screen.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DrawerItem {
@@ -35,6 +36,7 @@ class HomeScreen extends StatefulWidget {
   HomeScreen({Key key}) : super(key: key);
 
   final drawerItems = [
+    DrawerItem('Home', Icons.home, Colors.green),
     DrawerItem('Stundenplan', Icons.calendar_today, Colors.green),
     DrawerItem('Mensa', Icons.fastfood, Colors.red),
   ];
@@ -49,11 +51,16 @@ class _HomeScreenState extends State<HomeScreen> {
   _getDrawerItemWidget(int pos, fdNumber, passWord) {
     switch (pos) {
       case 0:
-        return ScheduleScreen(
+        return WelcomeScreen(
           fdNumber: fdNumber,
           passWord: passWord,
         );
       case 1:
+        return ScheduleScreen(
+          fdNumber: fdNumber,
+          passWord: passWord,
+        );
+      case 2:
         return MenuScreen(
           fdNumber: fdNumber,
           passWord: passWord,

@@ -22,7 +22,7 @@ import 'package:horstl_wrapper/horstl_wrapper.dart';
 class DishWidget extends StatefulWidget {
   final Dish dish;
 
-  DishWidget({Key key, this.dish});
+  DishWidget({Key key, this.dish}) : super(key: key);
 
   @override
   State<StatefulWidget> createState() => _DishWidgetState(dish);
