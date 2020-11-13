@@ -8,6 +8,7 @@ import 'package:horstler/widgets/course_widget.dart';
 import 'package:horstler/widgets/dish_showcase.dart';
 import 'package:intl/intl.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:retry/retry.dart';
 
 class WelcomeScreen extends StatefulWidget {
   final String fdNumber;
@@ -54,11 +55,13 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     initializeDateFormatting('de_DE');
     _scrapper = HorstlScrapper(_fdNumber, _passWord);
     _currentTime = DateTime.now();
-    _dataFuture = _getDataFromFuture();
+    _dataFuture =
+        retry(() => _getDataFromFuture().timeout(Duration(seconds: 5)));
     _dataRefresher = Timer.periodic(Duration(minutes: 5), (Timer t) {
       setState(() {
         _currentTime = DateTime.now();
-        _dataFuture = _getDataFromFuture();
+        _dataFuture =
+            retry(() => _getDataFromFuture().timeout(Duration(seconds: 5)));
       });
     });
     _timeRefresher = Timer.periodic(Duration(seconds: 30), (Timer t) {
@@ -78,7 +81,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   @override
   Widget build(BuildContext context) {
     var splashScreen = SplashScreen(
-      seconds: 20,
+      seconds: 51,
       navigateAfterSeconds: '/loginScreen',
       title: Text('horstler'),
       image: Image(
