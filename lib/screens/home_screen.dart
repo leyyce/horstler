@@ -23,6 +23,7 @@ import 'package:horstler/screens/menu_screen.dart';
 import 'package:horstler/screens/schedule_screen.dart';
 import 'package:horstler/screens/splash_screen.dart';
 import 'package:horstler/screens/welcome_screen.dart';
+import 'package:retry/retry.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class DrawerItem {
@@ -86,14 +87,14 @@ class HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return FutureBuilder(
-      future: _checkForLogin(),
+      future: retry(() => _checkForLogin().timeout(Duration(seconds: 5))),
       builder: (BuildContext context, AsyncSnapshot snapshot) {
         if (snapshot.hasError) {
           print(snapshot.error);
         }
         if (!snapshot.hasData) {
           return SplashScreen(
-            seconds: 30,
+            seconds: 51,
             navigateAfterSeconds: '/loginScreen',
             title: Text('horstler'),
             image: Image(

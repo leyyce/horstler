@@ -20,6 +20,7 @@ import 'package:flutter/material.dart';
 import 'package:horstl_wrapper/horstl_wrapper.dart';
 import 'package:horstler/widgets/course_widget.dart';
 import 'package:horstler/screens/splash_screen.dart';
+import 'package:retry/retry.dart';
 
 class ScheduleScreen extends StatefulWidget {
   final String fdNumber;
@@ -43,8 +44,9 @@ class _ScheduleScreenState extends State {
 
   Future<Schedule> _getDataFromFuture(
       String fdNumber, String passWord, int calendarWeek, int year) async {
-    return HorstlScrapper(fdNumber, passWord)
-        .getScheduleForWeek(calendarWeek, year);
+    return retry(() => HorstlScrapper(fdNumber, passWord)
+        .getScheduleForWeek(calendarWeek, year)
+        .timeout(Duration(seconds: 5)));
   }
 
   @override
@@ -79,7 +81,7 @@ class _ScheduleScreenState extends State {
     ][currentDay.weekday - 1];
 
     var splashScreen = SplashScreen(
-      seconds: 20,
+      seconds: 51,
       navigateAfterSeconds: '/loginScreen',
       title: Text('horstler'),
       image: Image(

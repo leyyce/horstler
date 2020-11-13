@@ -20,6 +20,7 @@ import 'package:flutter/material.dart';
 import 'package:horstl_wrapper/horstl_wrapper.dart';
 import 'package:horstler/widgets/dish_widget.dart';
 import 'package:horstler/screens/splash_screen.dart';
+import 'package:retry/retry.dart';
 
 class MenuScreen extends StatefulWidget {
   final String fdNumber;
@@ -45,7 +46,9 @@ class _MenuScreenState extends State {
     var menuWeek = <Menu>[];
     var day = currentDay;
     for (int i = 0; i < 6; i++) {
-      var menu = await HorstlScrapper(fdNumber, passWord).getMenu(day);
+      var menu = await HorstlScrapper(fdNumber, passWord)
+          .getMenu(day)
+          .timeout(Duration(seconds: 5));
       menuWeek.add(menu);
       day = day.add(Duration(days: 1));
     }
@@ -61,7 +64,8 @@ class _MenuScreenState extends State {
       _requestedDay = _requestedDay.add(Duration(days: 1));
     _requestedMonday = _getCurrentMonday(_requestedDay);
 
-    _menuFuture = _getMenuFromFuture(_fdNumber, _passWord, _requestedMonday);
+    _menuFuture =
+        retry(() => _getMenuFromFuture(_fdNumber, _passWord, _requestedMonday));
   }
 
   @override
@@ -77,7 +81,7 @@ class _MenuScreenState extends State {
     };
 
     var splashScreen = SplashScreen(
-      seconds: 20,
+      seconds: 51,
       navigateAfterSeconds: '/loginScreen',
       title: Text('horstler'),
       image: Image(
