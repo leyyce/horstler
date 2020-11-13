@@ -51,21 +51,28 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   _WelcomeScreenState(this._fdNumber, this._passWord);
 
   Future<Map> _getDataFromFuture() async {
-    var scheduleCurrent = await _scrapper.getScheduleForWeek(
-        _currentTime.weekOfYear, _currentTime.year);
+    var scheduleCurrent = retry(() => _scrapper
+        .getScheduleForWeek(_currentTime.weekOfYear, _currentTime.year)
+        .timeout(Duration(seconds: 5)));
     var w = _currentTime.weekOfYear + 1;
     var y = _currentTime.year;
     if (w > 53) {
       w = 1;
       y++;
     }
-    var scheduleNext = await _scrapper.getScheduleForWeek(w, y);
-    var menu = await _scrapper.getMenu(_currentTime.weekday < 7
-        ? _currentTime
-        : _currentTime.add(Duration(days: 1)));
+    var scheduleNext = retry(
+        () => _scrapper.getScheduleForWeek(w, y).timeout(Duration(seconds: 5)));
+    var menu = retry(() => _scrapper
+        .getMenu(_currentTime.weekday < 7
+            ? _currentTime
+            : _currentTime.add(Duration(days: 1)))
+        .timeout(Duration(seconds: 5)));
     return {
-      'schedule': {'current': scheduleCurrent, 'next': scheduleNext},
-      'menu': menu
+      'schedule': {
+        'current': await scheduleCurrent,
+        'next': await scheduleNext
+      },
+      'menu': await menu
     };
   }
 
@@ -75,13 +82,11 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
     initializeDateFormatting('de_DE');
     _scrapper = HorstlScrapper(_fdNumber, _passWord);
     _currentTime = DateTime.now();
-    _dataFuture =
-        retry(() => _getDataFromFuture().timeout(Duration(seconds: 5)));
+    _dataFuture = _getDataFromFuture();
     _dataRefresher = Timer.periodic(Duration(minutes: 5), (Timer t) {
       setState(() {
         _currentTime = DateTime.now();
-        _dataFuture =
-            retry(() => _getDataFromFuture().timeout(Duration(seconds: 5)));
+        _dataFuture = _getDataFromFuture();
       });
     });
     _timeRefresher = Timer.periodic(Duration(seconds: 30), (Timer t) {
