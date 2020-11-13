@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:horstl_wrapper/horstl_wrapper.dart';
+import 'package:horstler/screens/home_screen.dart';
 import 'package:horstler/screens/splash_screen.dart';
 import 'package:horstler/widgets/course_widget.dart';
 import 'package:horstler/widgets/dish_showcase.dart';
@@ -11,8 +12,10 @@ import 'package:intl/date_symbol_data_local.dart';
 class WelcomeScreen extends StatefulWidget {
   final String fdNumber;
   final String passWord;
+  final HomeScreenState parentState;
 
-  WelcomeScreen({Key key, this.fdNumber, this.passWord}) : super(key: key);
+  WelcomeScreen({Key key, this.fdNumber, this.passWord, this.parentState})
+      : super(key: key);
 
   @override
   State<WelcomeScreen> createState() => _WelcomeScreenState(fdNumber, passWord);
@@ -102,6 +105,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
           Menu menu = snapshot.data['menu'];
 
           var courseWidgets = <Widget>[];
+          var firstCourseIsOnNextDay = false;
 
           for (Day day in schedule.days.values) {
             for (Course course in day.courses()) {
@@ -141,32 +145,50 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                       (endTime.isAfter(_currentTime) ||
                           endTime.isAtSameMomentAs(_currentTime))) {
                     preText = 'Dein nächster Kurs';
-                    text = 'Läuft gerade';
-                  } else if (startTime.day != _currentTime.day)
-                    text = startTime.day - _currentTime.day == 1
-                        ? 'Morgen'
-                        : 'In ${startTime.difference(_currentTime).abs().inDays} Tagen';
+                    text = 'läuft gerade';
+                  } else if (startTime.day !=
+                      _currentTime
+                          .day) if (startTime.day - _currentTime.day == 1) {
+                    firstCourseIsOnNextDay = true;
+                    text = 'morgen';
+                  } else {
+                    text =
+                        'in ${startTime.difference(_currentTime).abs().inDays} Tagen';
+                  }
                   else {
                     var difference = startTime.difference(_currentTime).abs();
                     text =
                         'in ${difference.inHours} Std. ${difference.inMinutes - 60 * difference.inHours} Min';
                   }
 
-                  courseWidgets.add(Align(
-                    alignment: Alignment.center,
-                    child: Padding(
-                      padding: EdgeInsets.fromLTRB(0, 10, 0, 15),
-                      child: Text(
-                        preText,
-                        style: TextStyle(
-                          fontStyle: FontStyle.italic,
-                          fontSize: 20,
+                  courseWidgets.add(InkWell(
+                    onTap: () {
+                      widget.parentState.setState(() {
+                        widget.parentState.selectedDrawerIndex = 1;
+                      });
+                    },
+                    child: Align(
+                      alignment: Alignment.center,
+                      child: Padding(
+                        padding: EdgeInsets.fromLTRB(0, 10, 0, 15),
+                        child: Text(
+                          preText,
+                          style: TextStyle(
+                            fontStyle: FontStyle.italic,
+                            fontSize: 20,
+                          ),
                         ),
                       ),
                     ),
                   ));
 
-                  courseWidgets.add(Align(
+                  courseWidgets.add(InkWell(
+                    onTap: () {
+                      widget.parentState.setState(() {
+                        widget.parentState.selectedDrawerIndex = 1;
+                      });
+                    },
+                    child: Align(
                       key: UniqueKey(),
                       alignment: Alignment.center,
                       child: Padding(
@@ -178,29 +200,47 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                             fontSize: 25,
                           ),
                         ),
-                      )));
+                      ),
+                    ),
+                  ));
                 } else if (courseWidgets.length == 3) {
                   var difference = startTime.difference(_currentTime).abs();
-                  courseWidgets.add(Align(
-                    key: UniqueKey(),
-                    alignment: Alignment.center,
-                    child: Padding(
-                      padding: EdgeInsets.fromLTRB(0, 15, 0, 10),
-                      child: Text(
-                        startTime.day == _currentTime.day
-                            ? 'in ${difference.inHours} Std. ${difference.inMinutes - 60 * difference.inHours} Min'
-                            : (startTime.day - _currentTime.day == 1
-                                ? 'Morgen'
-                                : 'In ${difference.inDays} Tagen'),
-                        style: TextStyle(
-                          fontSize: 20,
+                  courseWidgets.add(InkWell(
+                    onTap: () {
+                      widget.parentState.setState(() {
+                        widget.parentState.selectedDrawerIndex = 1;
+                      });
+                    },
+                    child: Align(
+                      key: UniqueKey(),
+                      alignment: Alignment.center,
+                      child: Padding(
+                        padding: EdgeInsets.fromLTRB(0, 15, 0, 10),
+                        child: Text(
+                          startTime.day == _currentTime.day
+                              ? 'in ${difference.inHours} Std. ${difference.inMinutes - 60 * difference.inHours} Min'
+                              : (startTime.day - _currentTime.day == 1
+                                  ? (firstCourseIsOnNextDay
+                                      ? 'danach'
+                                      : 'morgen')
+                                  : 'in ${difference.inDays} Tagen'),
+                          style: TextStyle(
+                            fontSize: 20,
+                          ),
                         ),
                       ),
                     ),
                   ));
                 }
-                courseWidgets.add(CourseWidget(
-                  course: course,
+                courseWidgets.add(InkWell(
+                  onTap: () {
+                    widget.parentState.setState(() {
+                      widget.parentState.selectedDrawerIndex = 1;
+                    });
+                  },
+                  child: CourseWidget(
+                    course: course,
+                  ),
                 ));
               }
             }
@@ -223,7 +263,15 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   ),
                 ),
               )));
-          widgets.add(DishShowcase(menu.dishes));
+          widgets.add(
+            InkWell(
+                onTap: () {
+                  widget.parentState.setState(() {
+                    widget.parentState.selectedDrawerIndex = 2;
+                  });
+                },
+                child: DishShowcase(menu.dishes)),
+          );
           return Column(
             children: [
               Align(

@@ -42,11 +42,11 @@ class HomeScreen extends StatefulWidget {
   ];
 
   @override
-  _HomeScreenState createState() => _HomeScreenState();
+  HomeScreenState createState() => HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
-  int _selectedDrawerIndex = 0;
+class HomeScreenState extends State<HomeScreen> {
+  int selectedDrawerIndex = 0;
 
   _getDrawerItemWidget(int pos, fdNumber, passWord) {
     switch (pos) {
@@ -54,6 +54,7 @@ class _HomeScreenState extends State<HomeScreen> {
         return WelcomeScreen(
           fdNumber: fdNumber,
           passWord: passWord,
+          parentState: this,
         );
       case 1:
         return ScheduleScreen(
@@ -71,7 +72,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   _onSelectItem(BuildContext context, int index) {
-    setState(() => _selectedDrawerIndex = index);
+    setState(() => selectedDrawerIndex = index);
     Navigator.of(context).pop(); // close the drawer
   }
 
@@ -126,15 +127,15 @@ class _HomeScreenState extends State<HomeScreen> {
               title: Text(
                 d.title,
               ),
-              selected: i == _selectedDrawerIndex,
+              selected: i == selectedDrawerIndex,
               onTap: () => _onSelectItem(context, i),
             ));
           }
           return Scaffold(
             appBar: AppBar(
-              title: Text(widget.drawerItems[_selectedDrawerIndex].title),
+              title: Text(widget.drawerItems[selectedDrawerIndex].title),
               backgroundColor:
-                  widget.drawerItems[_selectedDrawerIndex].mainColor,
+                  widget.drawerItems[selectedDrawerIndex].mainColor,
               // bottom: widget.drawerItems[_selectedDrawerIndex].title != 'Timetable' ? null : TabBar(),
               actions: <Widget>[
                 IconButton(
@@ -161,7 +162,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                     ),
                     decoration: BoxDecoration(
-                      color: widget.drawerItems[_selectedDrawerIndex].mainColor,
+                      color: widget.drawerItems[selectedDrawerIndex].mainColor,
                     ),
                   ),
                   Column(
@@ -171,7 +172,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
             ),
             body: _getDrawerItemWidget(
-                _selectedDrawerIndex, loginInfo[0], loginInfo[1]),
+                selectedDrawerIndex, loginInfo[0], loginInfo[1]),
           );
         }
         return LoginScreen();
