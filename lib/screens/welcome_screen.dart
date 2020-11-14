@@ -360,7 +360,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               firstCourseIsOnNextDay = true;
               text = 'morgen';
             } else {
-              text = 'in ${difference.inDays} Tagen';
+              text =
+                  'in ${difference.inDays} ${difference.inDays == 1 ? 'Tag' : 'Tagen'}';
             }
             else {
               var difference = startTime.difference(_currentTime).abs();
@@ -411,7 +412,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               ),
             ));
             if (!_isSameDay(_currentTime, startTime) &&
-                !_isTomorrow(_currentTime, startTime)) {
+                !_isTomorrow(_currentTime, startTime) &&
+                difference.inHours - difference.inDays * 24 != 0) {
               targetLength++;
               targetDayTwo++;
               targetList.add(InkWell(
@@ -454,7 +456,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                         ? 'in ${difference.inHours} Std. ${difference.inMinutes - 60 * difference.inHours} Min'
                         : (_isTomorrow(_currentTime, startTime)
                             ? (firstCourseIsOnNextDay ? 'danach' : 'morgen')
-                            : 'in ${difference.inDays} Tagen'),
+                            : 'in ${difference.inDays} ${difference.inDays == 1 ? 'Tag' : 'Tagen'}'),
                     style: TextStyle(
                       fontSize: 20,
                     ),
@@ -464,7 +466,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
             ));
 
             if (!_isSameDay(_currentTime, startTime) &&
-                !_isTomorrow(_currentTime, startTime)) {
+                !_isTomorrow(_currentTime, startTime) &&
+                difference.inHours - difference.inDays * 24 != 0) {
               targetLength++;
               targetList.add(InkWell(
                 onTap: () {
