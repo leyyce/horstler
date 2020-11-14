@@ -108,7 +108,7 @@ class _MenuScreenState extends State {
           }
 
           var menuList;
-          menuList = snapshot.data ?? []; // ?? timeTable
+          menuList = snapshot.data ?? [];
           var menuWidgets = <Widget>[];
           for (var menu in menuList) {
             var dishWidgets = <Widget>[];
@@ -117,6 +117,35 @@ class _MenuScreenState extends State {
                 dish: dish,
               ));
             }
+            if (dishWidgets.isEmpty)
+              dishWidgets.add(Card(
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15.0),
+                ),
+                color: Colors.redAccent,
+                child: Container(
+                  decoration: BoxDecoration(
+                      shape: BoxShape.rectangle,
+                      borderRadius: BorderRadius.all(Radius.circular(15)),
+                      image: DecorationImage(
+                        colorFilter: ColorFilter.mode(
+                            Colors.black.withOpacity(0.6), BlendMode.darken),
+                        image: AssetImage('assets/images/mensa.jpg'),
+                        fit: BoxFit.fill,
+                        alignment: Alignment.center,
+                      )),
+                  child: Padding(
+                    padding: EdgeInsets.fromLTRB(25, 75, 25, 75),
+                    child: Text(
+                      'Heute ist die Mensa geschlossen.',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                      ),
+                    ),
+                  ),
+                ),
+              ));
             menuWidgets.add(
               Center(
                   child: ListView(
@@ -170,7 +199,11 @@ class _MenuScreenState extends State {
               'fri',
               'sat',
               'sun',
-            ][_requestedDay.weekday - 1]],
+            ][_requestedDay.weekday != 7 &&
+                    DateTime.now().weekOfYear == _requestedMonday.weekOfYear &&
+                    DateTime.now().year == _requestedMonday.year
+                ? _requestedDay.weekday - 1
+                : 0]],
             length: 6,
             child: Scaffold(
               backgroundColor: Colors.white38,

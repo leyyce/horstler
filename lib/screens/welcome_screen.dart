@@ -51,7 +51,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   _WelcomeScreenState(this._fdNumber, this._passWord);
 
   Future<Map> _getDataFromFuture() async {
-    var scheduleCurrent = retry(() => _scrapper
+    var scheduleCurrent = await retry(() => _scrapper
         .getScheduleForWeek(_currentTime.weekOfYear, _currentTime.year)
         .timeout(Duration(seconds: 5)));
     var w = _currentTime.weekOfYear + 1;
@@ -68,10 +68,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
             : _currentTime.add(Duration(days: 1)))
         .timeout(Duration(seconds: 5)));
     return {
-      'schedule': {
-        'current': await scheduleCurrent,
-        'next': await scheduleNext
-      },
+      'schedule': {'current': scheduleCurrent, 'next': await scheduleNext},
       'menu': await menu
     };
   }
@@ -140,7 +137,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
           }
 
           var widgets = <Widget>[];
-          if (courseWidgets.length != 0) {
+          if (courseWidgets.isNotEmpty) {
             widgets.addAll(courseWidgets);
           } else {
             widgets.add(InkWell(
@@ -163,22 +160,32 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 ),
               ),
             ));
-            widgets.add(
-              InkWell(
-                onTap: () {
-                  widget.parentState.setState(() {
-                    widget.parentState.selectedDrawerIndex = 1;
-                  });
-                },
-                child: Align(
-                  alignment: Alignment.center,
-                  child: Card(
-                    color: Color.fromRGBO(18, 124, 47, 100),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15.0),
-                    ),
+            widgets.add(InkWell(
+              onTap: () {
+                widget.parentState.setState(() {
+                  widget.parentState.selectedDrawerIndex = 1;
+                });
+              },
+              child: Align(
+                alignment: Alignment.center,
+                child: Card(
+                  color: Color.fromRGBO(18, 124, 47, 100),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15.0),
+                  ),
+                  child: Container(
+                    decoration: BoxDecoration(
+                        shape: BoxShape.rectangle,
+                        borderRadius: BorderRadius.all(Radius.circular(15)),
+                        image: DecorationImage(
+                          colorFilter: ColorFilter.mode(
+                              Colors.black.withOpacity(0.6), BlendMode.darken),
+                          image: AssetImage('assets/images/hs_fulda.jpg'),
+                          fit: BoxFit.fill,
+                          alignment: Alignment.center,
+                        )),
                     child: Padding(
-                      padding: EdgeInsets.fromLTRB(25, 35, 25, 35),
+                      padding: EdgeInsets.fromLTRB(25, 75, 25, 75),
                       child: Text(
                         'Keine ausstehenden Kurse in dieser oder der nächsten Woche.',
                         style: TextStyle(
@@ -190,7 +197,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   ),
                 ),
               ),
-            );
+            ));
           }
           widgets.add(Align(
               alignment: Alignment.center,
@@ -204,15 +211,54 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                   ),
                 ),
               )));
-          widgets.add(
-            InkWell(
+          if (menu.dishes.isEmpty)
+            widgets.add(
+              InkWell(
                 onTap: () {
                   widget.parentState.setState(() {
                     widget.parentState.selectedDrawerIndex = 2;
                   });
                 },
-                child: DishShowcase(menu.dishes)),
-          );
+                child: Card(
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(15.0),
+                  ),
+                  color: Colors.redAccent,
+                  child: Container(
+                    decoration: BoxDecoration(
+                        shape: BoxShape.rectangle,
+                        borderRadius: BorderRadius.all(Radius.circular(15)),
+                        image: DecorationImage(
+                          colorFilter: ColorFilter.mode(
+                              Colors.black.withOpacity(0.6), BlendMode.darken),
+                          image: AssetImage('assets/images/mensa.jpg'),
+                          fit: BoxFit.fill,
+                          alignment: Alignment.center,
+                        )),
+                    child: Padding(
+                      padding: EdgeInsets.fromLTRB(25, 75, 25, 75),
+                      child: Text(
+                        'Heute ist die Mensa geschlossen.',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 20,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            );
+          else
+            widgets.add(
+              InkWell(
+                  onTap: () {
+                    widget.parentState.setState(() {
+                      widget.parentState.selectedDrawerIndex = 2;
+                    });
+                  },
+                  child: DishShowcase(menu.dishes)),
+            );
           return Column(
             children: [
               Align(
@@ -309,8 +355,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                     endTime.isAtSameMomentAs(_currentTime))) {
               preText = 'Dein nächster Kurs';
               text = 'läuft gerade';
-            } else if (startTime.day !=
-                _currentTime.day) if (startTime.day - _currentTime.day == 1) {
+            } else if (!_isSameDay(_currentTime, startTime)) if (_isTomorrow(
+                _currentTime, startTime)) {
               firstCourseIsOnNextDay = true;
               text = 'morgen';
             } else {
@@ -353,7 +399,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 key: UniqueKey(),
                 alignment: Alignment.center,
                 child: Padding(
-                  padding: EdgeInsets.fromLTRB(0, 10, 0, 5),
+                  padding: EdgeInsets.fromLTRB(0, 10, 0, 7),
                   child: Text(
                     text,
                     style: TextStyle(
@@ -364,8 +410,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 ),
               ),
             ));
-            if (difference.inHours != 0 &&
-                startTime.day - _currentTime.day != 1) {
+            if (!_isSameDay(_currentTime, startTime) &&
+                !_isTomorrow(_currentTime, startTime)) {
               targetLength++;
               targetDayTwo++;
               targetList.add(InkWell(
@@ -402,11 +448,11 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 key: UniqueKey(),
                 alignment: Alignment.center,
                 child: Padding(
-                  padding: EdgeInsets.fromLTRB(0, 15, 0, 5),
+                  padding: EdgeInsets.fromLTRB(0, 15, 0, 7),
                   child: Text(
-                    startTime.day == _currentTime.day
+                    _isSameDay(_currentTime, startTime)
                         ? 'in ${difference.inHours} Std. ${difference.inMinutes - 60 * difference.inHours} Min'
-                        : (startTime.day - _currentTime.day == 1
+                        : (_isTomorrow(_currentTime, startTime)
                             ? (firstCourseIsOnNextDay ? 'danach' : 'morgen')
                             : 'in ${difference.inDays} Tagen'),
                     style: TextStyle(
@@ -417,8 +463,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               ),
             ));
 
-            if (startTime.day != _currentTime.day &&
-                startTime.day - _currentTime.day != 1) {
+            if (!_isSameDay(_currentTime, startTime) &&
+                !_isTomorrow(_currentTime, startTime)) {
               targetLength++;
               targetList.add(InkWell(
                 onTap: () {
@@ -466,5 +512,13 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
       if (element is CourseWidget) courseCount++;
     });
     return courseCount;
+  }
+
+  static bool _isSameDay(DateTime a, DateTime b) {
+    return a.day == b.day && a.month == b.month && a.year == b.year;
+  }
+
+  static bool _isTomorrow(DateTime a, DateTime b) {
+    return _isSameDay(a.add(Duration(days: 1)), b);
   }
 }

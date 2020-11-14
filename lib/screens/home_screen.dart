@@ -157,13 +157,27 @@ class HomeScreenState extends State<HomeScreen> {
                 children: <Widget>[
                   DrawerHeader(
                     child: ListTile(
-                      leading: Icon(Icons.person),
+                      leading: Icon(
+                        Icons.person,
+                        color: Colors.white,
+                      ),
                       title: Text(
                         loginInfo[0],
+                        style: TextStyle(
+                          color: Colors.white,
+                        ),
                       ),
                     ),
                     decoration: BoxDecoration(
-                      color: widget.drawerItems[selectedDrawerIndex].mainColor,
+                      image: DecorationImage(
+                        colorFilter: ColorFilter.mode(
+                            Colors.black.withOpacity(0.6), BlendMode.darken),
+                        image: AssetImage(selectedDrawerIndex != 2
+                            ? 'assets/images/hs_fulda.jpg'
+                            : 'assets/images/mensa.jpg'),
+                        fit: BoxFit.fill,
+                        alignment: Alignment.center,
+                      ),
                     ),
                   ),
                   Column(

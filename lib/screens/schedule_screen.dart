@@ -51,7 +51,7 @@ class _ScheduleScreenState extends State {
 
   @override
   void initState() {
-    if (DateTime.now().weekday == 6) _increaseWeekOfYear();
+    if (DateTime.now().weekday == 7) _increaseWeekOfYear();
     _scheduleFuture = _getDataFromFuture(
         _fdNumber, _passWord, _requestedWeek, _requestedYear);
     super.initState();
@@ -218,7 +218,10 @@ class _ScheduleScreenState extends State {
           }
 
           return DefaultTabController(
-            initialIndex: dayMapping[currentDayName],
+            initialIndex: _requestedWeek == currentDay.weekOfYear &&
+                    _requestedYear == currentDay.year
+                ? dayMapping[currentDayName]
+                : 0,
             length: 6,
             child: Scaffold(
               backgroundColor: Colors.white38,

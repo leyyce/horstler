@@ -51,8 +51,8 @@ class _DishWidgetState extends State<DishWidget> {
                   useDiskCache: true,
                   cacheRule: CacheRule(maxAge: const Duration(days: 5)),
                 ),
-                fit: BoxFit.fitWidth,
-                alignment: Alignment.topCenter,
+                fit: BoxFit.fill,
+                alignment: Alignment.center,
               )),
           child: Column(children: <Widget>[
             ListTile(
