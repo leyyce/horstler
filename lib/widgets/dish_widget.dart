@@ -51,7 +51,7 @@ class _DishWidgetState extends State<DishWidget> {
                   useDiskCache: true,
                   cacheRule: CacheRule(maxAge: const Duration(days: 5)),
                 ),
-                fit: BoxFit.fill,
+                fit: BoxFit.cover,
                 alignment: Alignment.center,
               )),
           child: Column(children: <Widget>[

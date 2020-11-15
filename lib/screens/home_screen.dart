@@ -38,7 +38,7 @@ class HomeScreen extends StatefulWidget {
 
   final drawerItems = [
     DrawerItem('Home', Icons.home, Colors.green),
-    DrawerItem('Stundenplan', Icons.calendar_today, Colors.green),
+    DrawerItem('Kursplan', Icons.calendar_today, Colors.green),
     DrawerItem('Mensa', Icons.fastfood, Colors.red),
   ];
 
@@ -175,7 +175,7 @@ class HomeScreenState extends State<HomeScreen> {
                         image: AssetImage(selectedDrawerIndex != 2
                             ? 'assets/images/hs_fulda.jpg'
                             : 'assets/images/mensa.jpg'),
-                        fit: BoxFit.fill,
+                        fit: BoxFit.cover,
                         alignment: Alignment.center,
                       ),
                     ),

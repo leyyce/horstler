@@ -41,7 +41,7 @@ class _CourseWidgetState extends State<CourseWidget> {
       color: Color.fromRGBO(18, 124, 47, 100),
       child: Column(children: <Widget>[
         ListTile(
-          contentPadding: EdgeInsets.only(left: 20, right: 20),
+          contentPadding: EdgeInsets.only(top: 5, left: 20, right: 20),
           leading: Icon(
             Icons.assignment,
             color: Colors.white,

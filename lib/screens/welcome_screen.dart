@@ -181,7 +181,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                           colorFilter: ColorFilter.mode(
                               Colors.black.withOpacity(0.6), BlendMode.darken),
                           image: AssetImage('assets/images/hs_fulda.jpg'),
-                          fit: BoxFit.fill,
+                          fit: BoxFit.cover,
                           alignment: Alignment.center,
                         )),
                     child: Padding(
@@ -204,7 +204,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
               child: Padding(
                 padding: EdgeInsets.fromLTRB(0, 25, 0, 10),
                 child: Text(
-                  'Heute in der Mensa',
+                  '${_currentTime.weekday != 7 ? 'Heute' : 'Morgen'} in der Mensa',
                   style: TextStyle(
                     fontWeight: FontWeight.bold,
                     fontSize: 25,
@@ -232,13 +232,13 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                           colorFilter: ColorFilter.mode(
                               Colors.black.withOpacity(0.6), BlendMode.darken),
                           image: AssetImage('assets/images/mensa.jpg'),
-                          fit: BoxFit.fill,
+                          fit: BoxFit.cover,
                           alignment: Alignment.center,
                         )),
                     child: Padding(
                       padding: EdgeInsets.fromLTRB(25, 75, 25, 75),
                       child: Text(
-                        'Heute ist die Mensa geschlossen.',
+                        '${_currentTime.weekday != 7 ? 'Heute' : 'Morgen'} ist die Mensa geschlossen.',
                         style: TextStyle(
                           color: Colors.white,
                           fontSize: 20,

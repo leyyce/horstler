@@ -131,7 +131,7 @@ class _MenuScreenState extends State {
                         colorFilter: ColorFilter.mode(
                             Colors.black.withOpacity(0.6), BlendMode.darken),
                         image: AssetImage('assets/images/mensa.jpg'),
-                        fit: BoxFit.fill,
+                        fit: BoxFit.cover,
                         alignment: Alignment.center,
                       )),
                   child: Padding(
