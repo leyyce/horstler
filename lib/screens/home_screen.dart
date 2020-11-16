@@ -40,6 +40,7 @@ class HomeScreen extends StatefulWidget {
     DrawerItem('Home', Icons.home, Colors.green),
     DrawerItem('Kursplan', Icons.calendar_today, Colors.green),
     DrawerItem('Mensa', Icons.fastfood, Colors.red),
+    DrawerItem('About', Icons.announcement, Colors.green),
   ];
 
   @override
@@ -66,7 +67,27 @@ class HomeScreenState extends State<HomeScreen> {
         return MenuScreen(
           fdNumber: fdNumber,
           passWord: passWord,
-        ); // mensaPage;
+        );
+      case 3:
+        return AboutListTile(
+            applicationVersion: '0.1.0',
+            applicationIcon: Image(
+              image: AssetImage('assets/icons/horstler_icon.png'),
+              width: 50,
+              height: 50,
+            ),
+            applicationLegalese: 'horstler - Student helper app for the Fulda University of Applied Sciences.\n\n' +
+                'Copyright (C) 2020  Yannic Wehner\n\n' +
+                'This program is free software: you can redistribute it and/or modify' +
+                'it under the terms of the GNU General Public License as published by' +
+                'the Free Software Foundation, either version 3 of the License, or' +
+                '(at your option) any later version.\n\n' +
+                'This program is distributed in the hope that it will be useful,' +
+                'but WITHOUT ANY WARRANTY; without even the implied warranty of' +
+                'MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the' +
+                'GNU General Public License for more details.' +
+                'You should have received a copy of the GNU General Public License ' +
+                'along with this program.  If not, see https://www.gnu.org/licenses/.');
       default:
         return new Text("Error");
     }
